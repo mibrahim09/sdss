@@ -68,8 +68,6 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 broadcaster = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # Setup the UDP socket
 
-broadcaster_sender = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
 
 def send_broadcast_thread(port):
     node_uuid = get_node_uuid()
@@ -78,7 +76,7 @@ def send_broadcast_thread(port):
         BROADCAST_STR = str(node_uuid) + ' ON ' + str(port)
         # print(BROADCAST_STR)
         packet = struct.pack(str(len(BROADCAST_STR)) + 's', bytes(BROADCAST_STR, 'utf-8'))
-        broadcaster_sender.sendto(packet, ('255.255.255.255', get_broadcast_port()))
+        broadcaster.sendto(packet, ('255.255.255.255', get_broadcast_port()))
         time.sleep(1)   # Leave as is.
 
 
@@ -152,10 +150,6 @@ def entrypoint():
     server.listen(5)
     MY_TCP_PORT = server.getsockname()[1]
     print('Server Initialized on port: ', MY_TCP_PORT)
-
-
-    broadcaster_sender.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    broadcaster_sender.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
     broadcaster.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     broadcaster.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
