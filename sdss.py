@@ -75,7 +75,7 @@ def send_broadcast_thread(port):
     node_uuid = get_node_uuid()
     while True:
         # TODO: write logic for sending broadcasts.
-        BROADCAST_STR = str(port) + ' ON ' + str(node_uuid)
+        BROADCAST_STR = str(node_uuid) + ' ON ' + str(port)
         # print(BROADCAST_STR)
         packet = struct.pack(str(len(BROADCAST_STR)) + 's', bytes(BROADCAST_STR, 'utf-8'))
         broadcaster_sender.sendto(packet, ('255.255.255.255', get_broadcast_port()))
@@ -93,8 +93,8 @@ def receive_broadcast_thread():
         # TODO: write logic for receiving broadcasts.
         data, (ip, port) = broadcaster.recvfrom(4096)
         items = data.decode('UTF-8').split(' ')
-        key = items[2]
-        actual_port = int(items[0])
+        key = items[0]
+        actual_port = int(items[2])
         if key != current_node:
             print_blue(f"RECV: {data} FROM: {ip}:{port}")
 
